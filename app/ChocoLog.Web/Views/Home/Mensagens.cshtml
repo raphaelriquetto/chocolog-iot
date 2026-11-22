@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Mensagens IoT";
+}
+<h1 class="page-title h3">Mensagens IoT</h1>
+<p class="text-muted">Medidas e alertas enviados pelo ESP32, consultados no histórico do STH-Comet.</p>
+
+<form id="filtro" class="card card-body mb-3" novalidate>
+    <div class="row g-3 align-items-end">
+        <div class="col-sm-6 col-lg-3">
+            <label class="form-label" for="attr">Grandeza</label>
+            <select class="form-select" id="attr" name="attr">
+                <option value="todas">Todas</option>
+                <option value="temperature">Temperatura</option>
+                <option value="humidity">Umidade</option>
+                <option value="luminosity">Luminosidade</option>
+                <option value="alertState">Alerta confirmado pelo ESP32</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <label class="form-label" for="quantidade">Quantidade</label>
+            <select class="form-select" id="quantidade" name="quantidade">
+                <option>20</option><option selected>50</option><option>100</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <label class="form-label" for="de">De</label>
+            <input class="form-control" type="datetime-local" id="de" name="de">
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <label class="form-label" for="ate">Até</label>
+            <input class="form-control" type="datetime-local" id="ate" name="ate">
+        </div>
+        <div class="col-lg-3 d-flex gap-2">
+            <button class="btn btn-primary flex-fill" type="submit"><i class="bi bi-search"></i> Consultar</button>
+            <button class="btn btn-outline-secondary" type="button" id="limpar" title="Limpar filtros" aria-label="Limpar filtros"><i class="bi bi-x-lg"></i></button>
+        </div>
+    </div>
+    <div class="text-danger small mt-2" id="filtro-erro" role="alert"></div>
+</form>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span id="resumo">Nenhuma consulta ainda</span>
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" id="auto">
+            <label class="form-check-label small" for="auto">Atualizar a cada 5 s</label>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr><th>Data e hora</th><th>Grandeza</th><th class="text-end">Valor</th></tr></thead>
+            <tbody id="linhas"><tr><td colspan="3" class="text-muted text-center py-4">Use os filtros e clique em Consultar.</td></tr></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/mensagens.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,55 @@
+@model List<Carga>
+@{
+    ViewData["Title"] = "Cargas";
+}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h1 class="page-title h3 mb-0">Cargas</h1>
+        <div class="text-muted small">Cargas de chocolate em transporte, guardadas no Orion (entidades do tipo Carga).</div>
+    </div>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg"></i> Nova carga</a>
+</div>
+
+<form method="get" class="mb-3" role="search">
+    <div class="input-group" style="max-width: 420px">
+        <input class="form-control" name="busca" value="@ViewBag.Busca" placeholder="Buscar por código, produto, cidade ou situação" aria-label="Buscar cargas">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+    </div>
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Código</th><th>Produto</th><th>Rota</th><th>Saída</th><th>Situação</th><th>Device</th><th class="text-end">Ações</th></tr></thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="7" class="text-center text-muted py-4">Nenhuma carga cadastrada.</td></tr>
+            }
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@c.Code</td>
+                    <td>@c.Product <span class="text-muted small">· @c.Boxes cx</span></td>
+                    <td>@c.Origin <i class="bi bi-arrow-right text-muted"></i> @c.Destination</td>
+                    <td>@c.Departure.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @{
+                            var badge = c.Status switch { "Entregue" => "text-bg-success", "Avariada" => "text-bg-danger", "Em trânsito" => "text-bg-primary", _ => "text-bg-secondary" };
+                        }
+                        <span class="badge @badge">@c.Status</span>
+                    </td>
+                    <td class="small text-muted">@c.DeviceEntityId.Replace("urn:ngsi-ld:", "")</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@c.Code" aria-label="Editar @c.Code"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Delete" asp-route-id="@c.Code" method="post" class="d-inline"
+                              onsubmit="return confirm('Excluir a carga @c.Code? Ela será apagada do Orion.')">
+                            <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir @c.Code"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

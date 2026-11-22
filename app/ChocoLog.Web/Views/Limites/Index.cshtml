@@ -1,0 +1,58 @@
+@model Limits
+@{
+    ViewData["Title"] = "Limites";
+    bool exists = ViewBag.Exists == true;
+}
+<h1 class="page-title h3 mb-1">Limites de conservação</h1>
+<p class="text-muted">
+    O monitor compara a <strong>média</strong> das últimas medidas com estes limites a cada 10 s.
+    Ficam guardados no Orion (entidade <code>@Limits.EntityId</code>).
+</p>
+@if (!exists)
+{
+    <div class="alert alert-warning">Ainda não salvos no Orion: estão sendo usados os valores do <code>chocolog.ino</code>. Clique em Salvar para criar.</div>
+}
+
+<form method="post" class="card card-body mb-3" style="max-width: 760px">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger mb-3" role="alert"></div>
+    }
+    <div class="row g-3">
+        <div class="col-sm-6"><label asp-for="TempMin" class="form-label"></label><input asp-for="TempMin" class="form-control" type="number" step="0.5" /></div>
+        <div class="col-sm-6"><label asp-for="TempMax" class="form-label"></label><input asp-for="TempMax" class="form-control" type="number" step="0.5" /></div>
+        <div class="col-sm-6"><label asp-for="HumMin" class="form-label"></label><input asp-for="HumMin" class="form-control" type="number" step="1" /></div>
+        <div class="col-sm-6"><label asp-for="HumMax" class="form-label"></label><input asp-for="HumMax" class="form-control" type="number" step="1" /></div>
+        <div class="col-sm-6"><label asp-for="LumMax" class="form-label"></label><input asp-for="LumMax" class="form-control" type="number" step="1" /></div>
+        <div class="col-sm-6">
+            <label asp-for="Window" class="form-label"></label>
+            <input asp-for="Window" class="form-control" type="number" min="3" max="100" />
+            <div class="form-text">O ESP32 envia a cada 5 s: 12 medidas = média do último minuto.</div>
+        </div>
+    </div>
+    <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg"></i> Salvar</button>
+    </div>
+</form>
+
+@if (exists)
+{
+    <form asp-action="Delete" method="post" onsubmit="return confirm('Apagar os limites do Orion e voltar aos valores do chocolog.ino?')">
+        <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-arrow-counterclockwise"></i> Restaurar padrão</button>
+    </form>
+}
+
+<div class="card mt-4" style="max-width: 760px">
+    <div class="card-header">O que o ESP32 faz em cada alerta</div>
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead><tr><th>Prioridade</th><th>Condição (média)</th><th>LED azul</th><th>Buzzer</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td>Temperatura fora de @Model.TempMin a @Model.TempMax °C</td><td>4 piscadas/s</td><td>2500 Hz</td></tr>
+                <tr><td>2</td><td>Umidade fora de @Model.HumMin a @Model.HumMax %</td><td>2 piscadas/s</td><td>1200 Hz</td></tr>
+                <tr><td>3</td><td>Luminosidade acima de @Model.LumMax %</td><td>1 piscada/s</td><td>600 Hz</td></tr>
+                <tr><td>-</td><td>Tudo dentro dos limites</td><td>apagado</td><td>mudo</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+@model FiwareSettings
+@{
+    ViewData["Title"] = "Configuração";
+    var steps = (List<ProvisionStep>)(ViewBag.Steps ?? new List<ProvisionStep>());
+    var subs = (List<SubscriptionInfo>)(ViewBag.Subscriptions ?? new List<SubscriptionInfo>());
+}
+<h1 class="page-title h3 mb-3">Configuração</h1>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <form method="post" class="card h-100">
+            <div class="card-header">Servidor FIWARE</div>
+            <div class="card-body">
+                <p class="text-muted small">O IP público do Learner Lab muda a cada início da sessão: troque aqui, sem reiniciar a aplicação.</p>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+                }
+                <div class="mb-3">
+                    <label asp-for="Host" class="form-label"></label>
+                    <input asp-for="Host" class="form-control" placeholder="54.123.45.67" />
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-4"><label asp-for="OrionPort" class="form-label small"></label><input asp-for="OrionPort" class="form-control" /></div>
+                    <div class="col-4"><label asp-for="IotAgentPort" class="form-label small"></label><input asp-for="IotAgentPort" class="form-control" /></div>
+                    <div class="col-4"><label asp-for="SthPort" class="form-label small"></label><input asp-for="SthPort" class="form-control" /></div>
+                </div>
+                <details class="mb-3">
+                    <summary class="small text-muted">Identificadores (só mude se mudar no firmware também)</summary>
+                    <div class="row g-2 mt-1">
+                        <div class="col-6"><label asp-for="Service" class="form-label small"></label><input asp-for="Service" class="form-control" /></div>
+                        <div class="col-6"><label asp-for="ServicePath" class="form-label small"></label><input asp-for="ServicePath" class="form-control" /></div>
+                        <div class="col-6"><label asp-for="ApiKey" class="form-label small"></label><input asp-for="ApiKey" class="form-control" /></div>
+                        <div class="col-6"><label asp-for="DeviceId" class="form-label small"></label><input asp-for="DeviceId" class="form-control" /></div>
+                        <div class="col-6"><label asp-for="EntityId" class="form-label small"></label><input asp-for="EntityId" class="form-control" /></div>
+                        <div class="col-6"><label asp-for="EntityType" class="form-label small"></label><input asp-for="EntityType" class="form-control" /></div>
+                    </div>
+                </details>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg"></i> Salvar</button>
+                <button class="btn btn-outline-primary" type="submit" formaction="@Url.Action("Testar")"><i class="bi bi-activity"></i> Testar conexão</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Provisionamento</div>
+            <div class="card-body">
+                <p class="text-muted small">Cria no FIWARE o que falta para o ESP32 funcionar. Pode clicar de novo: o que já existe é pulado.</p>
+                <ul class="list-unstyled mb-3">
+                    @foreach (var step in steps)
+                    {
+                        <li class="mb-2">
+                            <i class="bi @(step.Done ? "bi-check-circle-fill step-done" : "bi-circle step-todo")" aria-hidden="true"></i>
+                            @step.Name <span class="text-muted small">@(step.Done ? "ok" : step.Detail == "" ? "pendente" : step.Detail)</span>
+                        </li>
+                    }
+                </ul>
+                <form asp-action="Provisionar" method="post">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-magic"></i> Provisionar tudo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Assinaturas no Orion</span>
+        <form asp-action="CriarAssinatura" method="post">
+            <button class="btn btn-sm btn-outline-primary" type="submit"><i class="bi bi-plus-lg"></i> Assinatura do histórico</button>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Descrição</th><th>Atributos</th><th>Destino</th><th>Situação</th><th>Última notificação</th><th></th></tr></thead>
+            <tbody>
+            @if (subs.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">Nenhuma assinatura. Sem ela o STH-Comet não recebe as medidas.</td></tr>
+            }
+            @foreach (var s in subs)
+            {
+                <tr>
+                    <td>@s.Description <div class="small text-muted">@s.Id</div></td>
+                    <td class="small">@string.Join(", ", s.Attributes)</td>
+                    <td class="small">@s.Url</td>
+                    <td><span class="badge @(s.Status == "active" ? "text-bg-success" : "text-bg-secondary")">@s.Status</span></td>
+                    <td class="small">@(s.LastNotification is null ? "-" : DateTime.Parse(s.LastNotification).ToLocalTime().ToString("dd/MM HH:mm:ss"))</td>
+                    <td class="text-end">
+                        <form asp-action="ExcluirAssinatura" asp-route-id="@s.Id" method="post" onsubmit="return confirm('Excluir esta assinatura? O histórico para de receber medidas.')">
+                            <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir assinatura"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

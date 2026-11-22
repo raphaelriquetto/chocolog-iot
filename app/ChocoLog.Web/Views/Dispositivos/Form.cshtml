@@ -1,0 +1,41 @@
+@model DeviceInput
+@{
+    bool editing = ViewBag.Editing == true;
+    ViewData["Title"] = editing ? "Editar device" : "Novo device";
+}
+<h1 class="page-title h3 mb-1">@ViewData["Title"]</h1>
+<p class="text-muted">
+    O device é criado com os atributos <code>t</code> (temperatura), <code>h</code> (umidade), <code>l</code> (luminosidade),
+    <code>a</code> (alerta) e o comando <code>alert</code>, via MQTT.
+</p>
+
+<form method="post" asp-action="@(editing ? "Edit" : "Create")" asp-route-id="@(editing ? Model.DeviceId : null)" class="card card-body" style="max-width: 640px">
+    @if (ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+    {
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
+    }
+    <div class="mb-3">
+        <label asp-for="DeviceId" class="form-label"></label>
+        <input asp-for="DeviceId" class="form-control" disabled="@editing" />
+        <span asp-validation-for="DeviceId" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EntityId" class="form-label"></label>
+        <input asp-for="EntityId" class="form-control" readonly="@editing" />
+        <span asp-validation-for="EntityId" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger small"></span>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg"></i> Salvar</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+    </div>
+</form>

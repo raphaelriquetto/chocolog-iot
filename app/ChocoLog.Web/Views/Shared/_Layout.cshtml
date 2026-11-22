@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · ChocoLog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+        string Active(string c, string? a = null) => c == controller && (a is null || a == action) ? "active" : "";
+    }
+    <nav class="navbar navbar-expand-lg navbar-dark choco-nav">
+        <div class="container-xl">
+            <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark" aria-hidden="true"><i class="bi bi-grid-3x2-gap-fill"></i></span>
+                <span>ChocoLog</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link @Active("Home", "Index")" asp-controller="Home" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link @Active("Home", "Mensagens")" asp-controller="Home" asp-action="Mensagens"><i class="bi bi-list-columns"></i> Mensagens IoT</a></li>
+                    <li class="nav-item"><a class="nav-link @Active("Cargas")" asp-controller="Cargas" asp-action="Index"><i class="bi bi-truck"></i> Cargas</a></li>
+                    <li class="nav-item"><a class="nav-link @Active("Dispositivos")" asp-controller="Dispositivos" asp-action="Index"><i class="bi bi-cpu"></i> Dispositivos</a></li>
+                    <li class="nav-item"><a class="nav-link @Active("Limites")" asp-controller="Limites" asp-action="Index"><i class="bi bi-sliders"></i> Limites</a></li>
+                </ul>
+                <a class="nav-link text-light @Active("Configuracao")" asp-controller="Configuracao" asp-action="Index"><i class="bi bi-gear"></i> Configuração</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-xl py-4">
+        <partial name="_Messages" />
+        @RenderBody()
+    </main>
+
+    <footer class="container-xl pb-4 text-muted small">
+        ChocoLog IoT · Projeto N2 · Sistemas Embarcados e Linguagem de Programação I · FESA
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

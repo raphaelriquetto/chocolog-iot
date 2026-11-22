@@ -1,0 +1,10 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+# Configuração local da aplicação (IP salvo pela tela Configuração)
+app/ChocoLog.Web/App_Data/
+# Sistema
+.DS_Store
+Thumbs.db

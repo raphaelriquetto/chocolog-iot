@@ -1,0 +1,13 @@
+@* Avisos de sucesso e erro deixados pelos controllers (TempData) *@
+@if (TempData["Success"] is string ok)
+{
+    <div class="alert alert-success d-flex gap-2 align-items-start" role="status">
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i><div>@ok</div>
+    </div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><div>@error</div>
+    </div>
+}
