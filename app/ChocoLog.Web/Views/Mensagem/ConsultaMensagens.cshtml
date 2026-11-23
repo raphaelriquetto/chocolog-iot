@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Mensagens IoT";
+}
+
+<fieldset id="areaFiltro" class="form-group">
+    <legend>Consulta de mensagens IoT</legend>
+    <div class="row g-2 align-items-end">
+        <div class="col-lg-3">
+            Grandeza<br />
+            <select id="grandeza" class="form-select" asp-items="@ViewBag.ListaGrandezas"></select>
+        </div>
+        <div class="col-lg-2">
+            Quantidade<br />
+            <select id="quantidade" class="form-select">
+                <option>20</option>
+                <option selected>50</option>
+                <option>100</option>
+            </select>
+        </div>
+        <div class="col-lg-2">
+            Período<br />
+            <input type="date" id="dataInicial" class="form-control" />
+        </div>
+        <div class="col-lg-2">
+            <input type="date" id="dataFinal" class="form-control" />
+        </div>
+        <div class="col-lg-3">
+            <input type="button" id="btnFiltro" class="btn btn-success w-100" value="Aplicar" onclick="aplicaFiltroConsultaMensagens()" />
+        </div>
+    </div>
+</fieldset>
+
+<div id="resultadoConsulta" class="table-responsive"></div>
+
+@section Scripts {
+    <script>aplicaFiltroConsultaMensagens();</script>
+}

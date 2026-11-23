@@ -1,53 +1,56 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
-    <div>
-        <h1 class="page-title h3 mb-0">Dashboard</h1>
-        <div class="text-muted small"><span class="live-dot" id="live-dot"></span><span id="live-text">Conectando ao FIWARE…</span></div>
-    </div>
-    <div class="text-muted small text-end" id="monitor-info"></div>
-</div>
 
-<div class="status-banner unknown mb-4" id="banner" role="status" aria-live="polite">
-    <i class="bi bi-hourglass-split icon" id="banner-icon" aria-hidden="true"></i>
-    <div>
-        <div class="title" id="banner-title">Aguardando dados</div>
-        <div class="detail" id="banner-detail">O monitor calcula as médias a cada 10 s.</div>
-    </div>
+<div class="d-flex justify-content-between align-items-end mb-2">
+    <h2 class="mb-0">Dashboard</h2>
+    <span class="text-muted small" id="atualizadoEm">Carregando...</span>
+</div>
+<p class="text-muted">Valores do ESP32 carregados via AJAX a cada 5 segundos, a partir das APIs do dashboard.</p>
+
+<div id="faixaAlerta" class="faixa-alerta aguardando mb-4">
+    <div class="titulo" id="alertaTitulo">Aguardando dados</div>
+    <div class="detalhe" id="alertaDetalhe">O monitor calcula as médias a cada 10 segundos.</div>
 </div>
 
 <div class="row g-3 mb-4">
-    @foreach (var (key, label, unit, icon) in new[] {
-        ("temperature", "Temperatura", "°C", "thermometer-half"),
-        ("humidity", "Umidade", "%", "droplet-half"),
-        ("luminosity", "Luminosidade", "%", "brightness-high") })
-    {
-        <div class="col-md-4">
-            <div class="card metric h-100" id="card-@key">
-                <div class="label"><i class="bi bi-@icon" aria-hidden="true"></i> @label</div>
-                <div><span class="value" id="val-@key">--</span><span class="unit">@unit</span></div>
-                <div class="sub">Média da janela: <strong id="avg-@key">--</strong> · Limite: <span id="lim-@key">--</span></div>
-            </div>
-        </div>
-    }
+    <div class="col-md-4"><div class="card card-resumo" id="cardTemperatura"><div class="card-body"><small>Temperatura</small><h3 id="valTemperatura">...</h3><div class="small text-muted" id="medTemperatura"></div></div></div></div>
+    <div class="col-md-4"><div class="card card-resumo" id="cardUmidade"><div class="card-body"><small>Umidade</small><h3 id="valUmidade">...</h3><div class="small text-muted" id="medUmidade"></div></div></div></div>
+    <div class="col-md-4"><div class="card card-resumo" id="cardLuminosidade"><div class="card-body"><small>Luminosidade</small><h3 id="valLuminosidade">...</h3><div class="small text-muted" id="medLuminosidade"></div></div></div></div>
 </div>
 
-<div class="row g-3">
-    @foreach (var (key, label) in new[] { ("temperature", "Temperatura (°C)"), ("humidity", "Umidade (%)"), ("luminosity", "Luminosidade (%)") })
-    {
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between">
-                    <span>@label</span><span class="text-muted small fw-normal">histórico do STH-Comet</span>
-                </div>
-                <div class="card-body"><div class="chart-box"><canvas id="chart-@key" aria-label="Gráfico de @label"></canvas></div></div>
-            </div>
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold">Temperatura (°C)</div>
+            <div class="card-body"><div class="area-grafico"><canvas id="graficoTemperatura"></canvas></div></div>
         </div>
-    }
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold">Umidade (%)</div>
+            <div class="card-body"><div class="area-grafico"><canvas id="graficoUmidade"></canvas></div></div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold">Luminosidade (%)</div>
+            <div class="card-body"><div class="area-grafico"><canvas id="graficoLuminosidade"></canvas></div></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-2">
+    <div class="col-md-3"><a class="btn btn-outline-dark w-100" href="/mensagem/ConsultaMensagens">Consultar mensagens</a></div>
+    <div class="col-md-3"><a class="btn btn-outline-dark w-100" href="/carga/index">Gerenciar cargas</a></div>
+    <div class="col-md-3"><a class="btn btn-outline-dark w-100" href="/limite/index">Ajustar limites</a></div>
+    <div class="col-md-3"><a class="btn btn-outline-dark w-100" href="/configuracao/index">Configuração</a></div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        carregaDashboard();
+        setInterval(carregaDashboard, 5000);
+    </script>
 }

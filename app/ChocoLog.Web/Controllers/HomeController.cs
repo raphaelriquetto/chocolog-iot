@@ -1,14 +1,20 @@
+using System.Diagnostics;
+using ChocoLog.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ChocoLog.Web.Controllers;
-
-public class HomeController : Controller
+namespace ChocoLog.Web.Controllers
 {
-    /// <summary>Dashboard: valores atuais e gráficos. Os dados chegam por Ajax (api/dashboard).</summary>
-    public IActionResult Index() => View();
+    public class HomeController : Controller
+    {
+        // dashboard: os números e os gráficos são carregados via AJAX pela API (Api/DashboardController)
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-    /// <summary>Consulta das mensagens IoT. A tabela é preenchida por Ajax (api/mensagens).</summary>
-    public IActionResult Mensagens() => View();
-
-    public IActionResult Error() => View();
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+    }
 }

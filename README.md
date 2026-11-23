@@ -156,14 +156,14 @@ Os limites são os do `chocolog.ino` original e podem ser mudados na tela Limite
 
 **Aplicação**
 
-Precisa do [.NET 10 SDK](https://dotnet.microsoft.com/download). No Visual Studio, abra `app/ChocoLog.sln` e rode o projeto `ChocoLog.Web`. Pelo terminal:
+ASP.NET Core MVC 3.1, como nas aulas. No Visual Studio, abra `app/ChocoLog.sln` e rode o projeto `ChocoLog.Web` (F5). Pelo terminal, com o SDK do .NET instalado:
 
 ```bash
 cd app/ChocoLog.Web
 dotnet run --urls http://localhost:5080
 ```
 
-Abra `http://localhost:5080`. Na primeira vez, vá em **Configuração** e coloque o IP da EC2. Os testes da regra de alertas rodam com `dotnet test` na pasta `app`.
+Abra `http://localhost:5080`. Na primeira vez, vá em **Configuração** e coloque o IP da EC2. As APIs do dashboard ficam documentadas em `/swagger`. Os testes da regra de alertas (`app/ChocoLog.Tests`, opcionais) precisam do .NET 10 e rodam com `dotnet test` na pasta `app`.
 
 **Sem AWS e sem ESP32 (simulador)**
 
@@ -171,24 +171,33 @@ Para testar ou ensaiar a apresentação no próprio PC: com o [Node.js 20+](http
 
 ## Aplicação (ASP.NET Core MVC)
 
-| Tela | O que faz | API do FIWARE |
-|---|---|---|
-| Dashboard | valores atuais, médias, alerta ativo e um gráfico por grandeza; atualiza a cada 5 s sem recarregar | `GET` Orion `/v2/entities/{id}` e STH `/STH/v1/contextEntities/...` |
-| Mensagens IoT | consulta as medidas e os alertas por grandeza, quantidade e período (Ajax) | `GET` STH-Comet |
-| Cargas | CRUD das cargas de chocolate em transporte | Orion `POST`, `GET`, `PATCH` e `DELETE` em `/v2/entities` |
-| Dispositivos | CRUD dos devices ChocoLog | IoT Agent `/iot/devices` |
-| Limites | edita os limites e a janela da média | Orion `POST /v2/entities?options=upsert` |
-| Configuração | IP do servidor, teste dos serviços, provisionamento e assinaturas | IoT Agent `/iot/services`, Orion `/v2/subscriptions` |
+Segue o padrão das aulas: `PadraoViewModel`, `PadraoDAO<T>` e `PadraoController<T>` (Index, Create, Save com `Operacao` I/A, Edit e Delete, com `ValidaDados` e `PreencheDadosParaView`). A diferença é que o DAO não usa stored procedures: cada método chama a API do FIWARE.
 
-O monitor de alertas é um serviço em segundo plano (`Services/AlertMonitor.cs`) que funciona mesmo sem nenhuma página aberta. A regra de decisão fica em `Services/AlertEngine.cs`, separada e com testes em `app/ChocoLog.Tests`. Todas as chamadas ao FIWARE estão em `Services/FiwareClient.cs`, uma por método, com o endpoint comentado.
+| Banco SQL (aulas) | ChocoLog (FIWARE) |
+|---|---|
+| `ConexaoBD` | `DAO/ConexaoFiware.cs`: IP e portas, editáveis na tela Configuração |
+| `HelperDAO.ExecutaProc` | `DAO/HelperFiware.cs`: uma chamada HTTP com os cabeçalhos `fiware-service` e `fiware-servicepath` |
+| `spInsert_`, `spUpdate_`, `spDelete`, `spConsulta_`, `spListagem_` | `POST`, `PATCH`, `DELETE` e `GET` em `/v2/entities` (Orion) ou `/iot/devices` (IoT Agent) |
+| `CriaParametros` / `MontaModel` | `CriaAtributos` / `MontaModel` |
 
-Não há banco de dados SQL: tudo fica no FIWARE (cargas e limites no Orion, histórico no STH-Comet), como permite o enunciado.
+| Tela | Controller | O que faz | API do FIWARE |
+|---|---|---|---|
+| Dashboard | `Home` + `Api/Dashboard` | valores atuais, médias, alerta e um gráfico por grandeza, por AJAX a cada 5 s | Orion `GET /v2/entities/{id}` e STH `GET /STH/v1/contextEntities/...` |
+| Cadastros > Cargas | `Carga` | CRUD das cargas de chocolate em transporte | Orion `/v2/entities` (tipo Carga) |
+| Cadastros > Dispositivos | `Dispositivo` | CRUD dos devices ChocoLog | IoT Agent `/iot/devices` |
+| Cadastros > Limites | `Limite` | limites e janela da média | Orion `POST /v2/entities?options=upsert` |
+| Consultas > Mensagens IoT | `Mensagem` | filtro por grandeza, quantidade e período; o AJAX recebe a tabela pronta (`pvGridMensagens`) | STH-Comet |
+| Configuração | `Configuracao` | IP do servidor, teste dos serviços (AJAX), provisionamento e assinaturas | IoT Agent `/iot/services`, Orion `/v2/subscriptions` |
+
+As funções AJAX ficam em `wwwroot/js/site.js`, numeradas e comentadas. O monitor de alertas (`Services/MonitorAlertas.cs`) roda em segundo plano, mesmo sem nenhuma página aberta. A regra de decisão fica separada em `Services/RegraAlertas.cs`.
+
+Não há banco de dados SQL: tudo fica no FIWARE (cargas e limites no Orion, histórico no STH-Comet), como permite o enunciado. Por isso não há script SQL na entrega.
 
 ## Estrutura
 
 ```
 firmware/chocolog_iot/   código do ESP32
-app/ChocoLog.Web/        aplicação ASP.NET Core (controllers, services, views, wwwroot)
+app/ChocoLog.Web/        aplicação ASP.NET Core MVC 3.1 (Controllers, DAO, Models, Services, Views, wwwroot)
 app/ChocoLog.Tests/      testes da regra de alertas
 fiware/provisionar.sh    provisionamento por curl, alternativa ao botão da aplicação
 simulador/               FIWARE e ESP32 simulados para testar sem a AWS

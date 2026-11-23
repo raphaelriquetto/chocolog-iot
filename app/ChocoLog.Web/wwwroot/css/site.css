@@ -1,68 +1,155 @@
-/* ChocoLog: cores da marca (chocolate e creme) com cores de status separadas */
 :root {
-  --choco: #4a2c1d;
-  --choco-2: #6b3f27;
-  --caramel: #b9772b;
-  --cream: #faf6f1;
-  --card: #ffffff;
-  --ink: #2a1d16;
-  --muted: #6f6259;
-  --line: #eadfd5;
-  --ok: #1f8a4c;
-  --warn: #b7791f;
-  --bad: #c62828;
-  --bs-body-font-family: "Fira Sans", system-ui, sans-serif;
-  --bs-body-bg: var(--cream);
-  --bs-body-color: var(--ink);
-  --bs-primary: var(--choco-2);
-  --bs-primary-rgb: 107, 63, 39;
-  --bs-link-color: var(--choco-2);
-  --bs-link-hover-color: var(--choco);
+    --chocolate: #4a2c1d;
+    --chocolate-claro: #6b3f27;
+    --caramelo: #c8873a;
+    --creme: #f6f1eb;
 }
 
-body { background: var(--cream); color: var(--ink); }
-
-.choco-nav { background: var(--choco); }
-.choco-nav .nav-link { color: rgba(255, 255, 255, .78); border-radius: 8px; }
-.choco-nav .nav-link:hover, .choco-nav .nav-link.active { color: #fff; background: rgba(255, 255, 255, .1); }
-.brand-mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--caramel); color: var(--choco); }
-
-.btn-primary { --bs-btn-bg: var(--choco-2); --bs-btn-border-color: var(--choco-2); --bs-btn-hover-bg: var(--choco); --bs-btn-hover-border-color: var(--choco); --bs-btn-active-bg: var(--choco); }
-.btn-outline-primary { --bs-btn-color: var(--choco-2); --bs-btn-border-color: var(--choco-2); --bs-btn-hover-bg: var(--choco-2); --bs-btn-hover-border-color: var(--choco-2); }
-.form-control:focus, .form-select:focus { border-color: var(--caramel); box-shadow: 0 0 0 .2rem rgba(185, 119, 43, .25); }
-
-.page-title { font-weight: 700; letter-spacing: -.3px; }
-.card { border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(74, 44, 29, .05); }
-.card-header { background: transparent; border-bottom: 1px solid var(--line); font-weight: 600; }
-.table { --bs-table-bg: transparent; }
-.table thead th { font-size: .78rem; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 600; }
-
-/* Dashboard */
-.metric { padding: 1.1rem 1.2rem; }
-.metric .label { font-size: .8rem; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); font-weight: 600; }
-.metric .value { font-size: 2.4rem; font-weight: 700; line-height: 1.1; letter-spacing: -1px; }
-.metric .unit { font-size: 1.1rem; color: var(--muted); font-weight: 500; margin-left: 2px; }
-.metric .sub { font-size: .85rem; color: var(--muted); }
-.metric.out { border-color: var(--bad); box-shadow: 0 0 0 2px rgba(198, 40, 40, .15); }
-.metric.out .value { color: var(--bad); }
-
-.status-banner { border-radius: 14px; padding: 1rem 1.25rem; display: flex; gap: 1rem; align-items: center; color: #fff; }
-.status-banner.ok { background: var(--ok); }
-.status-banner.alert { background: var(--bad); }
-.status-banner.unknown { background: #8a7d74; }
-.status-banner .icon { font-size: 2rem; }
-.status-banner .title { font-weight: 700; font-size: 1.15rem; }
-.status-banner .detail { opacity: .9; font-size: .9rem; }
-@media (prefers-reduced-motion: no-preference) {
-  .status-banner.alert .icon { animation: pulse 1s ease-in-out infinite; }
+html {
+    font-size: 15px;
 }
-@keyframes pulse { 50% { opacity: .35; } }
 
-.chart-box { position: relative; height: 230px; }
-.live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); margin-right: 6px; }
-.live-dot.off { background: var(--bad); }
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-.badge-attr { font-weight: 600; }
-.step-done { color: var(--ok); }
-.step-todo { color: var(--warn); }
-code { color: var(--choco-2); }
+main {
+    flex: 1;
+}
+
+/* ÁREA ADMINISTRATIVA */
+
+.area-admin {
+    background-color: var(--creme);
+}
+
+.navbar-admin {
+    background-color: var(--chocolate);
+}
+
+.logo {
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.logo span {
+    color: var(--caramelo);
+}
+
+.btn-primary {
+    background-color: var(--chocolate-claro);
+    border-color: var(--chocolate-claro);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--chocolate);
+    border-color: var(--chocolate);
+}
+
+.card-resumo {
+    border: none;
+    border-left: 5px solid var(--caramelo);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+}
+
+.card-resumo small {
+    color: #6c757d;
+    text-transform: uppercase;
+    font-size: .75rem;
+}
+
+.card-resumo h3 {
+    font-weight: 700;
+    margin: 4px 0;
+}
+
+/* card fica vermelho quando a média sai do limite */
+.card-resumo.fora {
+    border-left-color: #dc3545;
+}
+
+.card-resumo.fora h3 {
+    color: #dc3545;
+}
+
+.area-grafico {
+    position: relative;
+    height: 230px;
+}
+
+/* faixa com o alerta decidido pelo monitor */
+.faixa-alerta {
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: #fff;
+}
+
+.faixa-alerta .titulo {
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.faixa-alerta.normal {
+    background-color: #198754;
+}
+
+.faixa-alerta.alerta {
+    background-color: #dc3545;
+}
+
+.faixa-alerta.aguardando {
+    background-color: #6c757d;
+}
+
+.rodape {
+    padding: 18px 0;
+    color: #6c757d;
+    font-size: .85rem;
+    border-top: 1px solid #e0d6cc;
+}
+
+/* consulta avançada (igual à apostila) */
+fieldset {
+    margin: 0 0 20px;
+    padding: 0 10px 10px;
+    border: 1px solid #666;
+    border-radius: 8px;
+    padding-top: 10px;
+    background-color: #fff;
+}
+
+legend {
+    padding: 2px 4px;
+    float: none;
+    width: auto;
+    font-size: 1.2rem;
+}
+
+/* mensagem rápida (toast) */
+.toast-loja {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    background-color: #198754;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: all .25s;
+    z-index: 2000;
+}
+
+.toast-loja.erro {
+    background-color: #dc3545;
+}
+
+.toast-loja.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}

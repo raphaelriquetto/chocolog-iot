@@ -1,0 +1,41 @@
+@model List<DispositivoViewModel>
+@{
+    ViewData["Title"] = "Dispositivos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Dispositivos</h2>
+    <a href="/dispositivo/create" class="btn btn-primary">+ Novo device</a>
+</div>
+<p class="text-muted">Devices provisionados no IoT Agent. Cada um vira uma entidade no Orion.</p>
+
+<table class="table table-hover align-middle bg-white shadow-sm">
+    <tr class="table-dark">
+        <th style="width: 180px">Ações</th>
+        <th>Código</th>
+        <th>Device / entidade</th>
+        <th>Descrição</th>
+        <th>Local</th>
+        <th>Atributos (MQTT → Orion)</th>
+        <th>Comandos</th>
+    </tr>
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td>
+                <a href="/dispositivo/Edit?id=@d.Id" class="btn btn-sm btn-info">Editar</a>
+                <a href="javascript:apagarRegistro('dispositivo', @d.Id)" class="btn btn-sm btn-danger">Apagar</a>
+            </td>
+            <td>@d.Id</td>
+            <td><strong>@d.DeviceId</strong><div class="small text-muted">@d.EntityId · @d.Transporte</div></td>
+            <td>@d.Descricao</td>
+            <td>@d.Local</td>
+            <td class="small">@string.Join(" · ", d.Atributos)</td>
+            <td class="small">@string.Join(", ", d.Comandos)</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr><td colspan="7" class="text-center text-muted py-4">Nenhum device. Use "Novo device" ou o botão Provisionar tudo em Configuração.</td></tr>
+    }
+</table>

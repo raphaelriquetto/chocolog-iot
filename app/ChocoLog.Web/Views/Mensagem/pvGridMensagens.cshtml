@@ -1,0 +1,35 @@
+@model List<LeituraViewModel>
+@{
+    // nome, unidade e cor de cada grandeza
+    var nomes = new Dictionary<string, string[]>
+    {
+        { "temperature", new[] { "Temperatura", " °C", "bg-warning text-dark" } },
+        { "humidity", new[] { "Umidade", " %", "bg-info text-dark" } },
+        { "luminosity", new[] { "Luminosidade", " %", "bg-secondary" } },
+        { "alertState", new[] { "Alerta", "", "bg-danger" } }
+    };
+    var alertas = new Dictionary<string, string> { { "OK", "OK (normal)" }, { "T", "Temperatura" }, { "U", "Umidade" }, { "L", "Luminosidade" } };
+}
+
+<table class="table table-striped bg-white shadow-sm">
+    <tr class="table-dark">
+        <th>Data e hora</th>
+        <th>Grandeza</th>
+        <th class="text-end">Valor</th>
+    </tr>
+    @foreach (var leitura in Model)
+    {
+        var info = nomes[leitura.Grandeza];
+        string valor = leitura.Grandeza == "alertState"
+            ? (alertas.ContainsKey(leitura.Valor ?? "") ? alertas[leitura.Valor] : leitura.Valor)
+            : (leitura.ValorNumerico.HasValue ? leitura.ValorNumerico.Value.ToString("0.#") + info[1] : leitura.Valor);
+        <tr>
+            <td>@leitura.Data.ToString("dd/MM/yyyy HH:mm:ss")</td>
+            <td><span class="badge @info[2]">@info[0]</span></td>
+            <td class="text-end fw-semibold">@valor</td>
+        </tr>
+    }
+    <tr class="fw-bold">
+        <td colspan="3">@Model.Count mensagem(ns) encontrada(s)</td>
+    </tr>
+</table>

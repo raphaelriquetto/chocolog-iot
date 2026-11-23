@@ -1,0 +1,43 @@
+@model List<CargaViewModel>
+@{
+    ViewData["Title"] = "Cargas";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Cargas</h2>
+    <a href="/carga/create" class="btn btn-primary">+ Nova carga</a>
+</div>
+<p class="text-muted">Cargas de chocolate em transporte, guardadas no Orion (entidades do tipo Carga).</p>
+
+<table class="table table-hover align-middle bg-white shadow-sm">
+    <tr class="table-dark">
+        <th style="width: 180px">Ações</th>
+        <th>Código</th>
+        <th>Produto</th>
+        <th class="text-end">Caixas</th>
+        <th>Rota</th>
+        <th>Saída</th>
+        <th>Situação</th>
+        <th>Device</th>
+    </tr>
+    @foreach (var carga in Model)
+    {
+        <tr>
+            <td>
+                <a href="/carga/Edit?id=@carga.Id" class="btn btn-sm btn-info">Editar</a>
+                <a href="javascript:apagarRegistro('carga', @carga.Id)" class="btn btn-sm btn-danger">Apagar</a>
+            </td>
+            <td>@carga.Id</td>
+            <td>@carga.Produto</td>
+            <td class="text-end">@carga.Caixas</td>
+            <td>@carga.Origem → @carga.Destino</td>
+            <td>@carga.DataSaida.ToString("dd/MM/yyyy")</td>
+            <td><partial name="_SituacaoCarga" model="carga.Situacao" /></td>
+            <td class="small">@carga.DescricaoDispositivo</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr><td colspan="8" class="text-center text-muted py-4">Nenhuma carga cadastrada.</td></tr>
+    }
+</table>

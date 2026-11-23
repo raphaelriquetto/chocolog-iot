@@ -1,0 +1,8 @@
+@model string
+@{
+    string cor = "bg-secondary";
+    if (Model == "Em trânsito") cor = "bg-primary";
+    else if (Model == "Entregue") cor = "bg-success";
+    else if (Model == "Avariada") cor = "bg-danger";
+}
+<span class="badge @cor">@Model</span>
