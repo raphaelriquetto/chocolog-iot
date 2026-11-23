@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChocoLog.Web", "ChocoLog.Web\ChocoLog.Web.csproj", "{1CE60265-B787-4B3C-A941-B319DE193DCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChocoLog.Tests", "ChocoLog.Tests\ChocoLog.Tests.csproj", "{6FE32839-59CF-4C83-972D-E30A66219D8D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,18 +27,6 @@ Global
 		{1CE60265-B787-4B3C-A941-B319DE193DCA}.Release|x64.Build.0 = Release|Any CPU
 		{1CE60265-B787-4B3C-A941-B319DE193DCA}.Release|x86.ActiveCfg = Release|Any CPU
 		{1CE60265-B787-4B3C-A941-B319DE193DCA}.Release|x86.Build.0 = Release|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Debug|x64.Build.0 = Debug|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Debug|x86.Build.0 = Debug|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Release|x64.ActiveCfg = Release|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Release|x64.Build.0 = Release|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Release|x86.ActiveCfg = Release|Any CPU
-		{6FE32839-59CF-4C83-972D-E30A66219D8D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

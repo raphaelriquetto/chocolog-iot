@@ -142,7 +142,18 @@ Os limites são os do `chocolog.ino` original e podem ser mudados na tela Limite
    docker compose up -d --wait
    ```
 
-6. Provisione: abra a aplicação (seção seguinte), vá em **Configuração**, coloque o IP da EC2, clique em **Salvar** e em **Provisionar tudo**. Isso cria o service group, o device `choco001`, os limites e a assinatura do histórico. Sem a aplicação, dá para fazer o mesmo na EC2 com o script [`fiware/provisionar.sh`](fiware/provisionar.sh).
+6. Provisione pelo Postman (service group, device e assinatura do histórico). Os nomes precisam ser estes, porque o firmware e a aplicação usam os mesmos:
+
+   | Item | Valor |
+   |---|---|
+   | fiware-service / fiware-servicepath | `chocolog` / `/` |
+   | apikey | `chocolog` |
+   | device_id | `choco001` |
+   | entity_name / entity_type | `urn:ngsi-ld:ChocoLog:001` / `ChocoLog` |
+   | atributos (object_id → name) | `t` → `temperature`, `h` → `humidity`, `l` → `luminosity`, `a` → `alertState` |
+   | comando | `alert` |
+
+   Se o Postman usar outros nomes, troque no firmware (`APIKEY`, `DEVICE_ID`) e na tela Configuração da aplicação.
 
 **A cada nova sessão do Learner Lab** a EC2 desliga e volta com outro IP. Os containers sobem sozinhos e o provisionamento continua salvo no MongoDB. Só é preciso trocar o IP em dois lugares: na tela Configuração da aplicação e no ESP32, digitando `ip NOVO_IP` no Monitor Serial.
 
@@ -163,7 +174,7 @@ cd app/ChocoLog.Web
 dotnet run --urls http://localhost:5080
 ```
 
-Abra `http://localhost:5080`. Na primeira vez, vá em **Configuração** e coloque o IP da EC2. As APIs do dashboard ficam documentadas em `/swagger`. Os testes da regra de alertas (`app/ChocoLog.Tests`, opcionais) precisam do .NET 10 e rodam com `dotnet test` na pasta `app`.
+Abra `http://localhost:5080`. Na primeira vez, vá em **Configuração** e coloque o IP da EC2. As APIs do dashboard ficam documentadas em `/swagger`.
 
 **Sem AWS e sem ESP32 (simulador)**
 
@@ -198,8 +209,6 @@ Não há banco de dados SQL: tudo fica no FIWARE (cargas e limites no Orion, his
 ```
 firmware/chocolog_iot/   código do ESP32
 app/ChocoLog.Web/        aplicação ASP.NET Core MVC 3.1 (Controllers, DAO, Models, Services, Views, wwwroot)
-app/ChocoLog.Tests/      testes da regra de alertas
-fiware/provisionar.sh    provisionamento por curl, alternativa ao botão da aplicação
 simulador/               FIWARE e ESP32 simulados para testar sem a AWS
 scripts/simular.cmd      atalho para o simulador no Windows
 ```
